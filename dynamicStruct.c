@@ -10,8 +10,11 @@ typedef struct Student
 }Student;
 
 int main(int argc, char **argv){
+    ///Now instantiate an struct from variable student.
     //TODO ask jeeho how to allocate memory for this Student array.
     Student* student = (Student*) malloc(sizeof(Student));
+    
+    ///To cpature line by line from file.
     char *buffer = (char*) malloc(sizeof(char*));
 
     FILE* file = fopen(argv[1], "r");
@@ -21,8 +24,9 @@ int main(int argc, char **argv){
     int i = 0;
 
     while(!feof(file)){
-        ///Jump to the next pointer address.
+        //Giving memory address to student linked list
         Student *s = student + i;
+        //Hence both the data'ss are char, malloc should also be char.
         student[i].data = (char*) malloc(sizeof(char*));
         sscanf(buffer, "%s %d", s->data, &s->d2);
         fgets(buffer, 200, file);
