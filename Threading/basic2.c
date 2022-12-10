@@ -1,31 +1,57 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 
 /**
- * Multiple threads in C
- */
+* Doing multiple operation on one thread is very dangerous.
+ * That's why we use Mutex
+ * Mutex: are used to block the thread until the thing is done
+*/
 
-int a = 0;
+pthread_mutex_t locked;
 
-void *func(void *var){
-    int *id = (int *)var;
-    static int b = 0;
+int a;
 
-    b = 7;
-    a = 7;
+void process(void* x){
+    pthread_mutex_lock(&locked);
 
-    printf("The ID of the thread is %d\n The global variable is %d\nThe static variable value is %d\n\n", *id, a, b);
+    int i = 0;
+    a++;
+
+    while(i < 6){
+        printf("%d", a);
+        sleep(1);
+        i++;
+
+    }
+    printf("...Finished...");
+
+    pthread_mutex_unlock(&locked);
+}
+
+void print(){
+    pthread_mutex_lock(&locked);
+    printf("Hello World");
+    pthread_mutex_unlock(&locked);
 }
 
 int main(){
-    pthread_t threadID;
-    //If you run loop 10 times you have 10 threads
-    for(int i = 0; i < 4; i++){
-        pthread_create(&threadID, NULL, func, (void*)&threadID);
+    pthread_t thread1, thread2;
+
+    if(pthread_mutex_init(&locked, NULL) != 0){
+        printf("Mutex Not Created Successfully...");
+        exit(1);
     }
-    //Used to exit the thread;
-    pthread_exit(NULL);
+
+    a = 0;
+
+    pthread_create(&thread1, NULL, process, NULL);
+    pthread_create(&thread1, NULL, print, NULL);
+    pthread_create(&thread2, NULL, process, NULL);
+
+    //To stop the thread for a bit
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+
     exit(0);
 }
