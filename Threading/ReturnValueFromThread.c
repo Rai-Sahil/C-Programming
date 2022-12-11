@@ -17,14 +17,18 @@ void* roll_dice(){
 
 int main(int argc, char** argv) {
     srand(time(NULL));
-    pthread_t thread1;
+    pthread_t th[4];
 
-    if( pthread_create(&thread1, NULL, &roll_dice, NULL) != 0) return 1;
+    for (int i = 0; i < 3; i++){
+        if( pthread_create(&th[i], NULL, &roll_dice, NULL) != 0) return 1;
+    }
 
     int *returnValue;
-    if(pthread_join(thread1, (void**)&returnValue) != 0) return 2;
 
-    printf("The returned value is %d", *returnValue);
+    for (int i = 0; i < 3; i++){
+        if(pthread_join(th[i], (void**)&returnValue) != 0) return 2;
+        printf("The returned value from thread %d is %d\n", i, *returnValue);
+    }
     free(returnValue);
     return 0;
 }
